@@ -71,6 +71,17 @@ services:
       - POSTGRES_PASSWORD=${PROVIDER_B_DB_PASSWORD}
       - POSTGRES_DB=${PROVIDER_B_DB}
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:9000"
+    volumes:
+      - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - airflow_service
+      - provider_a_service
+      - provider_b_service
+
 volumes:
   postgres_data_airflow:
   postgres_data_provider_a:
