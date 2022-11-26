@@ -1,16 +1,15 @@
+version: '3.7'
+
 services:
   airflow_service:
-    build: ./airflow_service
+    build: ./airflow-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./airflow_service/:/app/
+      - ./airflow-service/:/app/
     ports:
       - 8001:8000
-    env_file:
-      - .env
     environment:
-      - DATABASE_URI=postgresql://${AIRFLOW_DB_USER}:${AIRFLOW_DB_PASSWORD}@${AIRFLOW_DB_HOST}/${AIRFLOW_DB}
-      - AIRFLOW_SERVICE_HOST_URL=http://airflow_service:8000/api/v1/airflow/
+      - DATABASE_URI=postgresql://airflow_db_username:airflow_db_password@airflow_db/airflow_db_dev
     depends_on:
       - airflow_db
 
@@ -19,62 +18,57 @@ services:
     volumes:
       - postgres_data_airflow:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=${AIRFLOW_DB_USER}
-      - POSTGRES_PASSWORD=${AIRFLOW_DB_PASSWORD}
-      - POSTGRES_DB=${AIRFLOW_DB}
+      - POSTGRES_USER=airflow_db_username
+      - POSTGRES_PASSWORD=airflow_db_password
+      - POSTGRES_DB=airflow_db_dev
 
   provider_a_service:
-    build: ./provider_a_service
+    build: ./provider-a-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./provider_a_service/:/app/
+      - ./provider-a-service/:/app/
     ports:
       - 8002:8000
-    env_file:
-      - .env
     environment:
-      - DATABASE_URI=postgresql://${PROVIDER_A_DB_USER}:${PROVIDER_A_DB_PASSWORD}@${PROVIDER_A_DB_HOST}/${PROVIDER_A_DB}
-      - PROVIDER_A_SERVICE_HOST_URL=http://provider_a_service:8000/api/v1/provider_a/
+      - DATABASE_URI=postgresql://provider_a_db_username:provider_a_db_password@provider_a_db/provider_a_db_dev
     depends_on:
-      - provider_a_service_db
+      - provider_a_db
 
-  provider_a_service_db:
+  provider_a_db:
     image: postgres:12.1-alpine
     volumes:
       - postgres_data_provider_a:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=${PROVIDER_A_DB_USER}
-      - POSTGRES_PASSWORD=${PROVIDER_A_DB_PASSWORD}
-      - POSTGRES_DB=${PROVIDER_A_DB}
-  
+      - POSTGRES_USER=provider_a_db_username
+      - POSTGRES_PASSWORD=provider_a_db_password
+      - POSTGRES_DB=provider_a_db_dev
+
   provider_b_service:
-    build: ./provider_b_service
+    build: ./provider-b-service
     command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     volumes:
-      - ./provider_b_service/:/app/
+      - ./provider-b-service/:/app/
     ports:
       - 8003:8000
-    env_file:
-      - .env
     environment:
-      - DATABASE_URI=postgresql://${PROVIDER_B_DB_USER}:${PROVIDER_B_DB_PASSWORD}@${PROVIDER_B_DB_HOST}/${PROVIDER_B_DB}
-      - PROVIDER_B_SERVICE_HOST_URL=http://provider_b_service:8000/api/v1/provider_b/
+      - DATABASE_URI=postgresql://provider_b_db_username:provider_b_db_password@provider_b_db/provider_b_db_dev
     depends_on:
-      - provider_b_service_db
+      - provider_b_db
 
-  provider_b_service_db:
+  provider_b_db:
     image: postgres:12.1-alpine
     volumes:
       - postgres_data_provider_b:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=${PROVIDER_B_DB_USER}
-      - POSTGRES_PASSWORD=${PROVIDER_B_DB_PASSWORD}
-      - POSTGRES_DB=${PROVIDER_B_DB}
+      - POSTGRES_USER=provider_b_db_username
+      - POSTGRES_PASSWORD=provider_b_db_password
+      - POSTGRES_DB=provider_b_db_dev
+
 
   nginx:
     image: nginx:latest
     ports:
-      - "8080:9000"
+      - "8080:8080"
     volumes:
       - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
     depends_on:
