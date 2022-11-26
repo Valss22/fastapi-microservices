@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 import json
-import asyncio
 
 providers_b = APIRouter()
 

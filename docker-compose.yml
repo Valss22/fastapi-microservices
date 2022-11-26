@@ -9,20 +9,9 @@ services:
     ports:
       - 8001:8000
     environment:
-      - DATABASE_URI=postgresql://airflow_db_username:airflow_db_password@airflow_db/airflow_db_dev
       - PROVIDER_A_HOST_URL=http://provider_a_service:8000/api/v1/providers_a
       - PROVIDER_B_HOST_URL=http://provider_b_service:8000/api/v1/providers_b
-    depends_on:
-      - airflow_db
-
-  airflow_db:
-    image: postgres:12.1-alpine
-    volumes:
-      - postgres_data_airflow:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=airflow_db_username
-      - POSTGRES_PASSWORD=airflow_db_password
-      - POSTGRES_DB=airflow_db_dev
+  
  
   provider_a_service:
     build: ./provider-a-service
@@ -31,19 +20,7 @@ services:
       - ./provider-a-service/:/app/
     ports:
       - 8002:8000
-    environment:
-      - DATABASE_URI=postgresql://provider_a_db_username:provider_a_db_password@provider_a_db/provider_a_db_dev
-    depends_on:
-      - provider_a_db
 
-  provider_a_db:
-    image: postgres:12.1-alpine
-    volumes:
-      - postgres_data_provider_a:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=provider_a_db_username
-      - POSTGRES_PASSWORD=provider_a_db_password
-      - POSTGRES_DB=provider_a_db_dev
 
   provider_b_service:
     build: ./provider-b-service
@@ -52,19 +29,6 @@ services:
       - ./provider-b-service/:/app/
     ports:
       - 8003:8000
-    environment:
-      - DATABASE_URI=postgresql://provider_b_db_username:provider_b_db_password@provider_b_db/provider_b_db_dev
-    depends_on:
-      - provider_b_db
-
-  provider_b_db:
-    image: postgres:12.1-alpine
-    volumes:
-      - postgres_data_provider_b:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=provider_b_db_username
-      - POSTGRES_PASSWORD=provider_b_db_password
-      - POSTGRES_DB=provider_b_db_dev
 
 
   nginx:
@@ -77,8 +41,3 @@ services:
       - airflow_service
       - provider_a_service
       - provider_b_service
-
-volumes:
-  postgres_data_airflow:
-  postgres_data_provider_a:
-  postgres_data_provider_b:
