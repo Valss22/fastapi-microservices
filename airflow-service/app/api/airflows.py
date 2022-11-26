@@ -1,6 +1,5 @@
+import os
 from fastapi import APIRouter
-
-
 import httpx
 
 airflows = APIRouter()
@@ -8,10 +7,9 @@ airflows = APIRouter()
 
 @airflows.post("/search")
 async def airflow_search():
-    # provider_a_response = await httpx.get("http://provider-a:8000/api/v1/search")
-    # provider_b_response = await httpx.get("http://provider-b:8000/api/v1/search")
-    # return provider_a_response.json() + provider_b_response.json()
-    return {}
+    provider_a_response = httpx.post(os.environ.get("PROVIDER_A_HOST_URL") + "/search")
+    provider_b_response = httpx.post(os.environ.get("PROVIDER_B_HOST_URL") + "/search")
+    return {**provider_a_response.json(), **provider_b_response.json()}
 
 
 @airflows.get("/results/{search_id}/{currency}")

@@ -10,6 +10,8 @@ services:
       - 8001:8000
     environment:
       - DATABASE_URI=postgresql://airflow_db_username:airflow_db_password@airflow_db/airflow_db_dev
+      - PROVIDER_A_HOST_URL=http://provider_a_service:8000/api/v1/providers_a
+      - PROVIDER_B_HOST_URL=http://provider_b_service:8000/api/v1/providers_b
     depends_on:
       - airflow_db
 
