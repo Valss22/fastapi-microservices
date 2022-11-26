@@ -3,6 +3,7 @@ from fastapi import APIRouter
 import httpx
 import xmltodict
 import json
+from datetime import datetime
 
 airflows = APIRouter()
 
@@ -11,7 +12,8 @@ PROVIDER_B_HOST_URL = os.environ.get("PROVIDER_B_HOST_URL")
 
 
 def download_currency_rates():
-    url = "https://www.nationalbank.kz/rss/get_rates.cfm?fdate=26.10.2021"
+    current_day = datetime.now().strftime("%d.%m.%Y")
+    url = f"https://www.nationalbank.kz/rss/get_rates.cfm?fdate={current_day}"
     response_xml = httpx.get(url)
     response_dict = xmltodict.parse(response_xml.text)
     with open("currency_rates.json", "w") as file:
