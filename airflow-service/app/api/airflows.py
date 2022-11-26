@@ -1,8 +1,19 @@
 import os
 from fastapi import APIRouter
 import httpx
+import xmltodict
 
 airflows = APIRouter()
+
+
+def convert_currency(title: str, amount: float) -> float:
+    url = "https://www.nationalbank.kz/rss/get_rates.cfm?fdate=26.10.2021"
+    response_xml = httpx.get(url)
+    response_dict = xmltodict.parse(response_xml.text)
+    currency_items = response_dict["rates"]["item"]
+    for currency_item in currency_items:
+        if currency_item["title"] == title:
+            return round(float(currency_item["description"]) * amount, 2)
 
 
 @airflows.post("/search")
@@ -21,7 +32,11 @@ async def airflow_results(search_id: str, currency: str):
         for value in data_el.values():
             if value == search_id:
                 for j in range(len(data_el["items"])):
-                    results[i]["items"][j]["price"]["currency"] = currency
+                    price_item = results[i]["items"][j]["price"]
+                    price_item["currency"] = currency
+                    price_item["amount"] = convert_currency(
+                        currency, price_item["amount"]
+                    )
                 return results[i]
         i += 1
     return {"detail": "not found"}
