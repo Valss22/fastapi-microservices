@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.api.airflows import airflows
 from app.db import metadata, database, engine
+from app.api.airflows import download_currency_rates
 
 metadata.create_all(engine)
 
@@ -11,6 +12,7 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup():
+    download_currency_rates()
     await database.connect()
 
 

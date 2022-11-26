@@ -22,7 +22,7 @@ def download_currency_rates():
 def convert_currency(from_currency: str, to_currency: str, amount: float) -> float:
     if from_currency == to_currency:
         return amount
-    currency_rates = download_currency_rates()
+    currency_rates = json.load(open("currency_rates.json", "r"))
 
     currency_items = currency_rates["rates"]["item"]
     for currency_item in currency_items:
