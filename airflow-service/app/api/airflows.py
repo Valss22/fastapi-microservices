@@ -2,6 +2,7 @@ import os
 from fastapi import APIRouter
 import httpx
 import xmltodict
+import json
 
 airflows = APIRouter()
 
@@ -9,13 +10,21 @@ PROVIDER_A_HOST_URL = os.environ.get("PROVIDER_A_HOST_URL")
 PROVIDER_B_HOST_URL = os.environ.get("PROVIDER_B_HOST_URL")
 
 
-def convert_currency(from_currency: str, to_currency: str, amount: float) -> float:
-    if from_currency == to_currency:
-        return amount
+def download_currency_rates():
     url = "https://www.nationalbank.kz/rss/get_rates.cfm?fdate=26.10.2021"
     response_xml = httpx.get(url)
     response_dict = xmltodict.parse(response_xml.text)
-    currency_items = response_dict["rates"]["item"]
+    with open("currency_rates.json", "w") as file:
+        json.dump(response_dict, file)
+    return response_dict
+
+
+def convert_currency(from_currency: str, to_currency: str, amount: float) -> float:
+    if from_currency == to_currency:
+        return amount
+    currency_rates = download_currency_rates()
+
+    currency_items = currency_rates["rates"]["item"]
     for currency_item in currency_items:
         if currency_item["title"] == to_currency:
             if from_currency == "KZT":
