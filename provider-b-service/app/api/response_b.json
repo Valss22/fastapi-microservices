@@ -1,3 +1,12 @@
 {
-    "search_id": "d9e0cf5a-6bb8-4dae-8411-6caddcfd52da"
+    "search_id": "d9e0cf5a-6bb8-4dae-8411-6caddcfd52da",
+    "status": "PENDING",
+    "items": [
+        {
+            "price": {
+                "amount": 100,
+                "currency": "KZT"
+            }
+        }
+    ]
 }
