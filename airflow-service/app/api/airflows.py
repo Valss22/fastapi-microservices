@@ -67,7 +67,13 @@ async def get_provider_b_data():
 async def airflow_search():
     nonblock(get_provider_b_data)
     nonblock(get_provider_a_data)
-    return {}
+    provider_a_results = json.load(open("provider_a_results.json", "r"))
+    provider_b_results = json.load(open("provider_b_results.json", "r"))
+    if provider_a_results["search_id"]:
+        return {"search_id": provider_a_results["search_id"]}
+    elif provider_b_results["search_id"]:
+        return {"search_id": provider_b_results["search_id"]}
+    return {"search_id": None}
 
 
 @airflows.get("/results/{search_id}/{currency}")
