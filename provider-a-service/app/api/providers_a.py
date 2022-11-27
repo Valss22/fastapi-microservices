@@ -14,5 +14,5 @@ async def provider_a_search(item: Optional[Item] = None):
         data["items"].append(item.dict())
         with open("app/api/response_a.json", "w") as file:
             json.dump(data, file)
-    await asyncio.sleep(1)
+    await asyncio.sleep(30)
     return data
