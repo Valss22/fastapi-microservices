@@ -4,11 +4,20 @@ import httpx
 import xmltodict
 import json
 from datetime import datetime
+import asyncio
 
 airflows = APIRouter()
 
 PROVIDER_A_HOST_URL = os.environ.get("PROVIDER_A_HOST_URL")
 PROVIDER_B_HOST_URL = os.environ.get("PROVIDER_B_HOST_URL")
+
+
+client = httpx.AsyncClient()
+
+
+def nonblock(task, *args):
+    loop = asyncio.get_event_loop()
+    loop.create_task(task(*args))
 
 
 def download_currency_rates():
@@ -40,11 +49,25 @@ def convert_currency(from_currency: str, to_currency: str, amount: float) -> flo
     return round(from_currency_rate / to_currency_rate * amount, 2)
 
 
+async def get_provider_a_data():
+    response = await client.post(PROVIDER_A_HOST_URL + "/search")
+    with open("provider_a_results.json", "w") as file:
+        json.dump(response.json(), file)
+    return None
+
+
+async def get_provider_b_data():
+    response = await client.post(PROVIDER_B_HOST_URL + "/search")
+    with open("provider_b_results.json", "w") as file:
+        json.dump(response.json(), file)
+    return None
+
+
 @airflows.post("/search")
 async def airflow_search():
-    provider_a_response = httpx.post(PROVIDER_A_HOST_URL + "/search")
-    provider_b_response = httpx.post(PROVIDER_B_HOST_URL + "/search")
-    return provider_a_response.json()
+    nonblock(get_provider_b_data)
+    nonblock(get_provider_a_data)
+    return {}
 
 
 @airflows.get("/results/{search_id}/{currency}")
