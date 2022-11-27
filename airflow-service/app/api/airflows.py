@@ -67,34 +67,32 @@ async def get_provider_b_data():
 async def airflow_search():
     nonblock(get_provider_b_data)
     nonblock(get_provider_a_data)
-    provider_a_results = json.load(open("provider_a_results.json", "r"))
-    provider_b_results = json.load(open("provider_b_results.json", "r"))
-    if provider_a_results["search_id"]:
-        return {"search_id": provider_a_results["search_id"]}
-    elif provider_b_results["search_id"]:
-        return {"search_id": provider_b_results["search_id"]}
+    provider_a_data = json.load(open("provider_a_results.json", "r"))
+    provider_b_data = json.load(open("provider_b_results.json", "r"))
+    if provider_a_data["search_id"]:
+        return {"search_id": provider_a_data["search_id"]}
+    elif provider_b_data["search_id"]:
+        return {"search_id": provider_b_data["search_id"]}
     return {"search_id": None}
 
 
 @airflows.get("/results/{search_id}/{currency}")
 async def airflow_results(search_id: str, currency: str):
-    provider_a_response = httpx.post(PROVIDER_A_HOST_URL + "/search")
-    results = provider_a_response.json()
-    i = 0
-    for data_el in results:
-        for value in data_el.values():
-            if value == search_id:
-                for j in range(len(data_el["items"])):
-                    price_item = results[i]["items"][j]["price"]
-                    price_item["amount"] = convert_currency(
-                        price_item["currency"], currency, price_item["amount"]
-                    )
-                    price_item["currency"] = currency
-                sorted_items = sorted(
-                    results[i]["items"],
-                    key=lambda d: d["price"]["amount"],
+    provider_a_data = json.load(open("provider_a_results.json", "r"))
+    provider_b_data = json.load(open("provider_b_results.json", "r"))
+
+    for value in provider_a_data.values():
+        if value == search_id:
+            for j in range(len(provider_a_data["items"])):
+                price_item = provider_a_data["items"][j]["price"]
+                price_item["amount"] = convert_currency(
+                    price_item["currency"], currency, price_item["amount"]
                 )
-                results[i]["items"] = sorted_items
-                return results[i]
-        i += 1
+                price_item["currency"] = currency
+            sorted_items = sorted(
+                provider_a_data["items"],
+                key=lambda d: d["price"]["amount"],
+            )
+            provider_a_data["items"] = sorted_items
+            return provider_a_data
     return {"detail": "not found"}
