@@ -1,1 +1,1 @@
-{"detail": [{"loc": ["body"], "msg": "field required", "type": "value_error.missing"}]}
+{"search_id": "a5c7c374-37c8-4490-8751-a605b0933430", "status": "COMPLETED", "items": [{"price": {"amount": 200, "currency": "USD"}}, {"price": {"amount": 300, "currency": "USD"}}, {"price": {"amount": 123.0, "currency": "RUB"}}]}

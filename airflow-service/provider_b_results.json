@@ -1,1 +1,1 @@
-{"detail": [{"loc": ["body"], "msg": "field required", "type": "value_error.missing"}]}
+{"search_id": "d9e0cf5a-6bb8-4dae-8411-6caddcfd52da", "status": "COMPLETED", "items": [{"price": {"amount": 100, "currency": "KZT"}}, {"price": {"amount": 32.0, "currency": "KZT"}}]}
