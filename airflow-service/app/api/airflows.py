@@ -61,6 +61,11 @@ async def airflow_results(search_id: str, currency: str):
                         price_item["currency"], currency, price_item["amount"]
                     )
                     price_item["currency"] = currency
+                sorted_items = sorted(
+                    results[i]["items"],
+                    key=lambda d: d["price"]["amount"],
+                )
+                results[i]["items"] = sorted_items
                 return results[i]
         i += 1
     return {"detail": "not found"}
