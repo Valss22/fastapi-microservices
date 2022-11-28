@@ -17,6 +17,7 @@ def nonblock(task, *args):
 
 
 def download_currency_rates():
+    print("download_currency_rates")
     current_day = datetime.now().strftime("%d.%m.%Y")
     url = f"https://www.nationalbank.kz/rss/get_rates.cfm?fdate={current_day}"
     response_xml = httpx.get(url)
