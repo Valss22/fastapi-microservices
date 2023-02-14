@@ -4,10 +4,10 @@ import asyncio
 from app.api.schemas import Item
 from typing import Optional
 
-providers_a = APIRouter()
+provider_a_router = APIRouter()
 
 
-@providers_a.post("/search")
+@provider_a_router.post("/search")
 async def provider_a_search(item: Optional[Item] = None):
     data = json.load(open("app/api/response_a.json", "r"))
 
