@@ -2,10 +2,10 @@ from fastapi import APIRouter
 import json
 from app.api.utils import *
 
-airflows = APIRouter()
+airflow_router = APIRouter()
 
 
-@airflows.post("/search")
+@airflow_router.post("/search")
 async def airflow_search():
     nonblock(get_provider_b_data)
     nonblock(get_provider_a_data)
@@ -22,7 +22,7 @@ async def airflow_search():
     return {"search_id": None}
 
 
-@airflows.get("/results/{search_id}/{currency}")
+@airflow_router.get("/results/{search_id}/{currency}")
 async def airflow_results(search_id: str, currency: str):
     nonblock(get_provider_b_data)
     nonblock(get_provider_a_data)
@@ -41,7 +41,6 @@ async def airflow_results(search_id: str, currency: str):
         provider_b_data_by_search_id = get_data_by_search_id_in_providers(
             provider_b_data, search_id, currency
         )
-
         if provider_b_data_by_search_id:
             return provider_b_data_by_search_id
 

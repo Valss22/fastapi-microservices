@@ -1,6 +1,5 @@
 from fastapi import FastAPI
-from app.api.airflows import airflows
-from app.api.airflows import download_currency_rates
+from app.api.endpoints import airflow_router, download_currency_rates
 
 
 app = FastAPI(
@@ -23,4 +22,4 @@ async def startup():
 #         schedule.run_pending()
 
 
-app.include_router(airflows, prefix="/api/v1/airflows", tags=["airflows"])
+app.include_router(airflow_router, prefix="/api/v1/airflows", tags=["airflows"])
