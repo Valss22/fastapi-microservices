@@ -13,7 +13,6 @@ async def startup():
     download_currency_rates()
 
 
-# Не работает только под докером, но работает как и ожидается вне докера
 # @app.on_event("startup")
 # def downloads_currency_rates_every_day():
 #     import schedule
